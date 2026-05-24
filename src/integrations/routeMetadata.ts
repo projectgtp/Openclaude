@@ -28,6 +28,7 @@ const TRANSPORT_KIND_PROVIDER_TYPE_LABELS: Partial<
   'openai-compatible': 'OpenAI-compatible API',
 }
 
+const ZAPI_HOST = 'z.os7.site'
 const XIAOMI_MIMO_PRIMARY_HOST = 'api.xiaomimimo.com'
 const XIAOMI_MIMO_STALE_DOCS_HOST = 'api.mimo-v2.com'
 export const XIAOMI_MIMO_PRIMARY_BASE_URL = `https://${XIAOMI_MIMO_PRIMARY_HOST}/v1`
@@ -260,6 +261,42 @@ export function getXiaomiMimoBaseUrlOverride(
   return undefined
 }
 
+export function isZapiBaseUrl(value: string | undefined): boolean {
+  const trimmed = value?.trim()
+  if (!trimmed) return false
+  try {
+    return new URL(trimmed).hostname.toLowerCase() === ZAPI_HOST
+  } catch {
+    return false
+  }
+}
+
+export function getZapiBaseUrlOverride(
+  processEnv: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  const openAIBaseUrl = processEnv.OPENAI_BASE_URL?.trim()
+  if (isZapiBaseUrl(openAIBaseUrl)) return openAIBaseUrl
+
+  const zapiBaseUrl = processEnv.ZAPI_BASE_URL?.trim()
+  if (isZapiBaseUrl(zapiBaseUrl)) return zapiBaseUrl
+
+  return undefined
+}
+
+export function hasZapiEnvOnlyProviderIntent(
+  processEnv: NodeJS.ProcessEnv = process.env,
+): boolean {
+  return (
+    hasNonEmptyEnvValue(processEnv.ZAPI_API_KEY) &&
+    !hasNonEmptyEnvValue(processEnv.OPENAI_API_KEY) &&
+    !hasNonEmptyEnvValue(processEnv.XAI_API_KEY) &&
+    !hasNonEmptyEnvValue(processEnv.MINIMAX_API_KEY) &&
+    !hasNonEmptyEnvValue(processEnv.VENICE_API_KEY) &&
+    !hasNonEmptyEnvValue(processEnv.MIMO_API_KEY) &&
+    hasNoExplicitNonOpenAICompatibleProvider(processEnv)
+  )
+}
+
 export function isVeniceBaseUrl(value: string | undefined): boolean {
   const trimmed = value?.trim()
   if (!trimmed) {
@@ -328,7 +365,8 @@ function hasNoExplicitNonOpenAICompatibleProvider(
     !isEnvTruthy(processEnv.CLAUDE_CODE_USE_MISTRAL) &&
     !isEnvTruthy(processEnv.CLAUDE_CODE_USE_BEDROCK) &&
     !isEnvTruthy(processEnv.CLAUDE_CODE_USE_VERTEX) &&
-    !isEnvTruthy(processEnv.CLAUDE_CODE_USE_FOUNDRY)
+    !isEnvTruthy(processEnv.CLAUDE_CODE_USE_FOUNDRY) &&
+    !isEnvTruthy(processEnv.CLAUDE_CODE_USE_ZAPI)
   )
 }
 
@@ -383,7 +421,7 @@ export function hasXiaomiMimoEnvOnlyProviderIntent(
 
 export function resolveEnvOnlyProviderRouteId(
   processEnv: NodeJS.ProcessEnv = process.env,
-): 'xai' | 'minimax' | 'venice' | 'xiaomi-mimo' | null {
+): 'xai' | 'minimax' | 'venice' | 'xiaomi-mimo' | 'zapi' | null {
   if (hasXaiEnvOnlyProviderIntent(processEnv)) {
     return 'xai'
   }
@@ -398,6 +436,10 @@ export function resolveEnvOnlyProviderRouteId(
 
   if (hasXiaomiMimoEnvOnlyProviderIntent(processEnv)) {
     return 'xiaomi-mimo'
+  }
+
+  if (hasZapiEnvOnlyProviderIntent(processEnv)) {
+    return 'zapi'
   }
 
   return null
@@ -588,6 +630,9 @@ export function resolveActiveRouteIdFromEnv(
     activeProfileProvider?: string
   },
 ): string | null {
+  if (isEnvTruthy(processEnv.CLAUDE_CODE_USE_ZAPI)) {
+    return 'zapi'
+  }
   if (isEnvTruthy(processEnv.CLAUDE_CODE_USE_GEMINI)) {
     return 'gemini'
   }

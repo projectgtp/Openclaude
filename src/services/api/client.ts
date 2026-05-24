@@ -327,6 +327,26 @@ export async function getAnthropicClient({
     applyXaiEnvOnlyDefaults()
   }
 
+  if (isEnvTruthy(process.env.CLAUDE_CODE_USE_ZAPI)) {
+    const { createZapiShimClient } = await import('./zapiShim.js')
+    return createZapiShimClient({
+      defaultHeaders,
+      maxRetries,
+      timeout: parseInt(process.env.API_TIMEOUT_MS || String(600 * 1000), 10),
+    }) as unknown as Anthropic
+  }
+
+  const useZapiEnvOnlyProvider = resolveEnvOnlyProviderRouteId(process.env) === 'zapi'
+  if (useZapiEnvOnlyProvider) {
+    process.env.CLAUDE_CODE_USE_ZAPI = '1'
+    const { createZapiShimClient } = await import('./zapiShim.js')
+    return createZapiShimClient({
+      defaultHeaders,
+      maxRetries,
+      timeout: parseInt(process.env.API_TIMEOUT_MS || String(600 * 1000), 10),
+    }) as unknown as Anthropic
+  }
+
   if (
     useMiniMaxEnvOnlyProvider ||
     useXiaomiMimoEnvOnlyProvider ||

@@ -23,6 +23,7 @@ export type LegacyAPIProvider =
   | 'mistral'
   | 'xai'
   | 'xiaomi-mimo'
+  | 'zapi'
 
 // Backward-compatible public alias. Keep importing APIProvider where callers
 // intentionally consume the legacy category surface.
@@ -33,9 +34,15 @@ export function getAPIProvider(): LegacyAPIProvider {
     return 'foundry'
   }
 
+  if (isEnvTruthy(process.env.CLAUDE_CODE_USE_ZAPI)) {
+    return 'zapi'
+  }
+
   const activeRouteId = resolveActiveRouteIdFromEnv(process.env)
 
   switch (activeRouteId) {
+    case 'zapi':
+      return 'zapi'
     case 'gemini':
       return 'gemini'
     case 'mistral':
