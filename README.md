@@ -2,7 +2,9 @@
 
 OpenClaude is an open-source coding-agent CLI for cloud and local model providers.
 
-Use OpenAI-compatible APIs, Gemini, GitHub Models, Codex OAuth, Codex, Ollama, Atomic Chat, and other supported backends while keeping one terminal-first workflow: prompts, tools, agents, MCP, slash commands, and streaming output.
+**Zapi is the default provider** — just run `openclaude` and it will prompt you for a free Zapi API key if you don't have one set. No configuration needed to get started.
+
+Use Zapi, OpenAI-compatible APIs, Gemini, GitHub Models, Codex OAuth, Codex, Ollama, Atomic Chat, and other supported backends while keeping one terminal-first workflow: prompts, tools, agents, MCP, slash commands, and streaming output.
 
 [![PR Checks](https://github.com/Gitlawb/openclaude/actions/workflows/pr-checks.yml/badge.svg?branch=main)](https://github.com/Gitlawb/openclaude/actions/workflows/pr-checks.yml)
 [![Release](https://img.shields.io/github/v/tag/Gitlawb/openclaude?label=release&color=0ea5e9)](https://github.com/Gitlawb/openclaude/tags)
@@ -54,6 +56,7 @@ OpenClaude is also mirrored to GitLawb:
 
 ## Why OpenClaude
 
+- **Zero-config start** — Zapi is the default provider; just run `openclaude` and enter your free key when prompted
 - Use one CLI across cloud APIs and local model backends
 - Save provider profiles inside the app with `/provider`
 - Run with OpenAI-compatible services, Gemini, GitHub Models, Codex OAuth, Codex, Ollama, Atomic Chat, and other supported providers
@@ -70,9 +73,36 @@ npm install -g @gitlawb/openclaude
 
 If the install later reports `ripgrep not found`, install ripgrep system-wide and confirm `rg --version` works in the same terminal before starting OpenClaude.
 
-### Start
+### Start (zero config — Zapi default)
 
 ```bash
+openclaude
+```
+
+On first run, OpenClaude will prompt you for a free Zapi API key:
+
+```
+╔════════════════════════════════════════════╗
+║        Zapi API Key Required               ║
+║  Get your free key: https://z.os7.site     ║
+╚════════════════════════════════════════════╝
+
+  Enter Zapi API key (zp_...): _
+```
+
+Get your free key at **https://z.os7.site/dashboard**, paste it in, and you are done.
+
+To skip the prompt on future runs, set the key in your shell:
+
+macOS / Linux:
+```bash
+export ZAPI_API_KEY=zp_your-key-here
+openclaude
+```
+
+Windows PowerShell:
+```powershell
+$env:ZAPI_API_KEY="zp_your-key-here"
 openclaude
 ```
 
@@ -142,6 +172,7 @@ Advanced and source-build guides:
 
 | Provider | Setup Path | Notes |
 | --- | --- | --- |
+| **Zapi** ⭐ | Zero-config default | Free API gateway at `https://z.os7.site`; prompts for `ZAPI_API_KEY` on first run; get a free key at https://z.os7.site/dashboard |
 | OpenAI-compatible | `/provider` or env vars | Works with OpenAI, OpenRouter, DeepSeek, Groq, Mistral, LM Studio, and other compatible `/v1` servers |
 | Hicap | `/provider` or OpenAI-compatible env vars | Uses `api-key` auth, discovers models from unauthenticated `/models`, and supports Responses mode for `gpt-` models |
 | Gemini | `/provider` or env vars | Supports API key only |
@@ -167,6 +198,7 @@ Advanced and source-build guides:
 
 OpenClaude supports multiple providers, but behavior is not identical across all of them.
 
+- Zapi is the default when no other provider or API key is configured. Set `ZAPI_API_KEY` to skip the startup prompt.
 - Anthropic-specific features may not exist on other providers
 - Tool quality depends heavily on the selected model
 - Smaller local models can struggle with long multi-step tool flows
@@ -271,7 +303,7 @@ npm run dev:grpc:cli
 ```bash
 bun install
 bun run build
-node dist/cli.mjs
+bun dist/cli.mjs
 ```
 
 Helpful commands:
