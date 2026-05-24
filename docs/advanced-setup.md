@@ -15,8 +15,8 @@ npm install -g @gitlawb/openclaude
 Use Bun `1.3.13` or newer for source builds on Windows. Older Bun versions can fail during `bun run build`.
 
 ```bash
-git clone https://github.com/Gitlawb/openclaude.git
-cd openclaude
+git clone https://github.com/projectgtp/Openclaude.git
+cd Openclaude
 
 bun install
 bun run build
@@ -26,14 +26,30 @@ npm link
 ### Option C: Run directly with Bun
 
 ```bash
-git clone https://github.com/Gitlawb/openclaude.git
-cd openclaude
+git clone https://github.com/projectgtp/Openclaude.git
+cd Openclaude
 
 bun install
 bun run dev
 ```
 
 ## Provider Examples
+
+### Zapi (Default)
+
+Zapi is the default provider when no other API key is configured. Just run `openclaude` and enter your free key at the prompt, or set it in advance:
+
+```bash
+export ZAPI_API_KEY=zp_your-key-here
+```
+
+Get a free key at **https://z.os7.site/dashboard**.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ZAPI_API_KEY` | Yes (prompted on first run) | Your Zapi API key (`zp_...`) |
+| `ZAPI_BASE_URL` | No | Override the Zapi gateway URL (default: `https://z.os7.site`) |
+| `ZAPI_MODEL` | No | Model to request (default: `claude`) |
 
 ### OpenAI
 
@@ -200,6 +216,9 @@ export OPENAI_MODEL=gpt-4o
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `ZAPI_API_KEY` | Zapi only (prompted if unset) | Your Zapi API key (`zp_...`); get one free at https://z.os7.site/dashboard |
+| `ZAPI_BASE_URL` | No | Override the Zapi gateway base URL (default: `https://z.os7.site`) |
+| `ZAPI_MODEL` | No | Model name to request via Zapi (default: `claude`) |
 | `CLAUDE_CODE_USE_OPENAI` | OpenAI-compatible only | Set to `1` to enable the OpenAI-compatible provider path |
 | `OPENAI_API_KEY` | OpenAI-compatible cloud routes* | Your API key (`*` not needed for local models like Ollama, LM Studio, Atomic Chat, or other local OpenAI-compatible proxies) |
 | `OPENAI_MODEL` | OpenAI-compatible only | Model name such as `gpt-4o`, `deepseek-v4-flash`, or `llama3.3:70b` |
@@ -221,7 +240,7 @@ export OPENAI_MODEL=gpt-4o
 | `OPENCLAUDE_DISABLE_CO_AUTHORED_BY` | No | Suppress the default `Co-Authored-By` trailer in generated git commits |
 | `OPENCLAUDE_LOG_TOKEN_USAGE` | No | When truthy (e.g. `verbose`), emits one JSON line on stderr per API request with input/output/cache tokens and the resolved provider. **User-facing debug output** — complements the REPL display controlled by `/config showCacheStats`. Distinct from `CLAUDE_CODE_ENABLE_TOKEN_USAGE_ATTACHMENT`, which is **model-facing** (injects context usage info into the prompt itself). Both can run together. |
 
-Model env vars are provider-scoped: Anthropic-native sessions read
+Model env vars are provider-scoped: Zapi reads `ZAPI_MODEL`, Anthropic-native sessions read
 `ANTHROPIC_MODEL`, OpenAI-compatible sessions read `OPENAI_MODEL`, Gemini reads
 `GEMINI_MODEL`, and Mistral reads `MISTRAL_MODEL`.
 
