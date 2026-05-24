@@ -21,7 +21,32 @@ npm --version
 npm install -g @gitlawb/openclaude
 ```
 
-## 3. Pick One Provider
+## 3. Start OpenClaude
+
+```bash
+openclaude
+```
+
+**No setup needed.** Zapi is the default provider. On first run, OpenClaude will prompt you for a free API key:
+
+```
+╔════════════════════════════════════════════╗
+║        Zapi API Key Required               ║
+║  Get your free key: https://z.os7.site     ║
+╚════════════════════════════════════════════╝
+
+  Enter Zapi API key (zp_...): _
+```
+
+Get your free key at **https://z.os7.site/dashboard**, paste it in, and you are ready to code.
+
+To skip the prompt on future runs, add this to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export ZAPI_API_KEY=zp_your-key-here
+```
+
+## 4. Pick a Different Provider (Optional)
 
 ### Option A: OpenAI
 
@@ -95,7 +120,7 @@ Replace `your-model-name` with the model name shown in LM Studio.
 
 No API key is needed for LM Studio local models (but uncomment the `OPENAI_API_KEY` line if you hit auth errors).
 
-## 4. If `openclaude` Is Not Found
+## 5. If `openclaude` Is Not Found
 
 Close the terminal, open a new one, and try again:
 
@@ -103,9 +128,14 @@ Close the terminal, open a new one, and try again:
 openclaude
 ```
 
-## 5. If Your Provider Fails
+## 6. If Your Provider Fails
 
 Check the basics:
+
+### For Zapi
+
+- make sure the key starts with `zp_`
+- make sure you copied it fully from https://z.os7.site/dashboard
 
 ### For OpenAI or DeepSeek
 
@@ -126,13 +156,13 @@ Check the basics:
 - make sure a model is loaded in LM Studio
 - make sure the model name matches what you set in `OPENAI_MODEL`
 
-## 6. Updating OpenClaude
+## 7. Updating OpenClaude
 
 ```bash
 npm install -g @gitlawb/openclaude@latest
 ```
 
-## 7. Uninstalling OpenClaude
+## 8. Uninstalling OpenClaude
 
 ```bash
 npm uninstall -g @gitlawb/openclaude
