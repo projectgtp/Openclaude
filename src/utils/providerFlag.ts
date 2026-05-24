@@ -211,6 +211,7 @@ export function applyProviderFlag(
   delete process.env.CLAUDE_CODE_USE_GITHUB
   delete process.env.CLAUDE_CODE_USE_BEDROCK
   delete process.env.CLAUDE_CODE_USE_VERTEX
+  delete process.env.CLAUDE_CODE_USE_ZAPI
   delete process.env.NVIDIA_NIM
   if (copiedOpenAIKeyProvider && provider !== copiedOpenAIKeyProvider) {
     delete process.env.OPENAI_API_KEY
@@ -321,6 +322,12 @@ export function applyProviderFlag(
       if (process.env.VENICE_API_KEY && !process.env.OPENAI_API_KEY) {
         process.env.OPENAI_API_KEY = process.env.VENICE_API_KEY
       }
+      break
+
+    case 'zapi':
+      process.env.CLAUDE_CODE_USE_ZAPI = '1'
+      process.env.ZAPI_MODEL ??= defaultModel ?? 'claude'
+      if (model) process.env.ZAPI_MODEL = model
       break
   }
 

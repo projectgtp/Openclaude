@@ -373,6 +373,27 @@ export const PROVIDER_PRESET_MANIFEST = [
     ]
   },
   {
+    "preset": "zapi",
+    "routeKind": "gateway",
+    "routeId": "zapi",
+    "vendorId": "openai",
+    "gatewayId": "zapi",
+    "description": "Zapi Gateway — multi-model API gateway (Claude, Gemini, Llama, Qwen, and more)",
+    "label": "Zapi Gateway",
+    "name": "Zapi Gateway",
+    "apiKeyEnvVars": [
+      "ZAPI_API_KEY"
+    ],
+    "baseUrlEnvVars": [
+      "ZAPI_BASE_URL"
+    ],
+    "modelEnvVars": [
+      "ZAPI_MODEL"
+    ],
+    "fallbackBaseUrl": "https://z.os7.site",
+    "fallbackModel": "claude"
+  },
+  {
     "preset": "custom",
     "routeKind": "gateway",
     "routeId": "custom",
@@ -421,5 +442,6 @@ export const ORDERED_PROVIDER_PRESETS = [
   "xai",
   "xiaomi-mimo",
   "zai",
+  "zapi",
   "custom"
 ] as const

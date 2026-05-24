@@ -336,7 +336,7 @@ export async function getAnthropicClient({
     }) as unknown as Anthropic
   }
 
-  const useZapiEnvOnlyProvider = resolveEnvOnlyProviderRouteId(process.env) === 'zapi'
+  const useZapiEnvOnlyProvider = envOnlyProviderRouteId === 'zapi'
   if (useZapiEnvOnlyProvider) {
     process.env.CLAUDE_CODE_USE_ZAPI = '1'
     const { createZapiShimClient } = await import('./zapiShim.js')
