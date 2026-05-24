@@ -40,6 +40,43 @@ function getZapiApiKey(): string {
   return process.env.ZAPI_API_KEY?.trim() ?? ''
 }
 
+/**
+ * Interactively prompt the user to type their Zapi API key.
+ * Uses stderr so it works even in pipe mode. Saves the key to
+ * process.env.ZAPI_API_KEY for the rest of the session.
+ */
+export async function promptForZapiApiKey(): Promise<void> {
+  if (process.env.ZAPI_API_KEY?.trim()) return
+
+  const { createInterface } = await import('node:readline')
+
+  process.stderr.write(
+    '\n╔════════════════════════════════════════════╗\n' +
+    '║        Zapi API Key Required               ║\n' +
+    '║  Get your free key: https://z.os7.site     ║\n' +
+    '╚════════════════════════════════════════════╝\n\n',
+  )
+
+  return new Promise(resolve => {
+    const rl = createInterface({
+      input: process.stdin,
+      output: process.stderr,
+    })
+
+    rl.question('  Enter Zapi API key (zp_...): ', answer => {
+      rl.close()
+      const key = answer.trim()
+      if (key) {
+        process.env.ZAPI_API_KEY = key
+        process.stderr.write('  ✓ Key saved for this session.\n\n')
+      } else {
+        process.stderr.write('  ⚠ No key entered — continuing without key.\n\n')
+      }
+      resolve()
+    })
+  })
+}
+
 export function getZapiBaseUrl(): string {
   return (process.env.ZAPI_BASE_URL?.trim() ?? DEFAULT_ZAPI_BASE_URL).replace(/\/+$/, '')
 }

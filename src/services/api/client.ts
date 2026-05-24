@@ -517,6 +517,21 @@ export async function getAnthropicClient({
     return new AnthropicVertex(vertexArgs) as unknown as Anthropic
   }
 
+  // No explicit provider and no Anthropic key → default to Zapi
+  if (!isClaudeAiSubscriber && !getAnthropicApiKey()) {
+    if (!process.env.ZAPI_API_KEY?.trim()) {
+      const { promptForZapiApiKey } = await import('./zapiShim.js')
+      await promptForZapiApiKey()
+    }
+    process.env.CLAUDE_CODE_USE_ZAPI = '1'
+    const { createZapiShimClient } = await import('./zapiShim.js')
+    return createZapiShimClient({
+      defaultHeaders,
+      maxRetries,
+      timeout: parseInt(process.env.API_TIMEOUT_MS || String(600 * 1000), 10),
+    }) as unknown as Anthropic
+  }
+
   // Determine authentication method based on available tokens
   const clientConfig: ConstructorParameters<typeof Anthropic>[0] = {
     apiKey: isClaudeAiSubscriber ? null : apiKey || getAnthropicApiKey(),
